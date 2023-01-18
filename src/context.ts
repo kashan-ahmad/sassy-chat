@@ -1,7 +1,7 @@
 import { createContext } from "preact";
-import type { BaseContextType } from "./types";
+import type { SassyContextInterface } from "./types";
 
-export const BaseContext = createContext<BaseContextType>({
+export const SassyContext = createContext<SassyContextInterface>({
   user: undefined,
   setUser: () => {},
 });

@@ -1,11 +1,23 @@
+import strings from "./strings";
+import { SassyContext } from "./context";
+import { useContext } from "preact/hooks";
+import { loginWithGoogle } from "./server";
+
+// Components.
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
-import { loginWithGoogle } from "./server";
-import LoginIcon from "@mui/icons-material/Login";
+import GoogleIcon from "@mui/icons-material/Google";
 
 export default function Login() {
+  const { setUser } = useContext(SassyContext);
+
   function onClickListener() {
-    loginWithGoogle({ onSuccess: () => {}, onFailure: () => {} });
+    loginWithGoogle({
+      onSuccess: (user) => {
+        setUser(user);
+      },
+      onFailure: () => {},
+    });
   }
 
   return (
@@ -19,9 +31,9 @@ export default function Login() {
         color="error"
         variant="contained"
         onClick={onClickListener}
-        startIcon={<LoginIcon />}
+        startIcon={<GoogleIcon />}
       >
-        Login
+        {strings.LOGIN}
       </Button>
     </Grid>
   );
