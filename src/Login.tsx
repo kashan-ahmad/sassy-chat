@@ -1,22 +1,33 @@
 import strings from "./strings";
+import { useSnackbar } from "notistack";
 import { SassyContext } from "./context";
-import { useContext } from "preact/hooks";
 import { loginWithGoogle } from "./server";
+import { useContext, useState } from "preact/hooks";
 
 // Components.
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
+import LoadingButton from "@mui/lab/LoadingButton";
 import GoogleIcon from "@mui/icons-material/Google";
 
 export default function Login() {
+  const { enqueueSnackbar } = useSnackbar();
   const { setUser } = useContext(SassyContext);
+  const [isLoading, setIsLoading] = useState(false);
 
   function onClickListener() {
+    setIsLoading(true);
+
     loginWithGoogle({
       onSuccess: (user) => {
+        setIsLoading(false);
         setUser(user);
       },
-      onFailure: () => {},
+      onFailure: (message) => {
+        setIsLoading(false);
+        enqueueSnackbar(message, {
+          variant: "error",
+        });
+      },
     });
   }
 
@@ -27,14 +38,15 @@ export default function Login() {
       alignItems="center"
       justifyContent="center"
     >
-      <Button
+      <LoadingButton
         color="error"
         variant="contained"
-        onClick={onClickListener}
+        loading={isLoading}
         startIcon={<GoogleIcon />}
+        onClick={() => onClickListener()}
       >
         {strings.LOGIN}
-      </Button>
+      </LoadingButton>
     </Grid>
   );
 }

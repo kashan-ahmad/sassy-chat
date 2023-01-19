@@ -29,7 +29,10 @@ export function loginWithGoogle({
 
       if (!credentials) throw new Error(strings.DEFAULT_ERROR);
 
-      onSuccess({ ...result.user, accessToken: credentials.accessToken });
+      onSuccess({
+        status: "loaded",
+        data: result.user,
+      });
     })
     .catch(() => {
       onFailure(strings.DEFAULT_ERROR);

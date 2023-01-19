@@ -1,5 +1,8 @@
+import { auth } from "./server";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
+import { Button } from "@mui/material";
+import { signOut } from "firebase/auth";
 import CardContent from "@mui/material/CardContent";
 
 export default function Chat() {
@@ -10,6 +13,12 @@ export default function Chat() {
       alignItems="center"
       justifyContent="center"
     >
+      <Button
+        onClick={() => signOut(auth)}
+        sx={{ position: "absolute", top: 0, left: 0 }}
+      >
+        Logout
+      </Button>
       <Card
         elevation={1}
         sx={{
@@ -32,7 +41,6 @@ export default function Chat() {
           },
         }}
       >
-        <img />
         <CardContent>Hello World</CardContent>
       </Card>
     </Grid>

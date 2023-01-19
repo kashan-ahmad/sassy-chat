@@ -1,14 +1,9 @@
+import strings from "./strings";
 import { Grid, Typography, CircularProgress } from "@mui/material";
 
-const lines = [
-  "Swinging the Leviathan Axe",
-  "Calling out the Mjolnir",
-  "Praying to the All Father",
-  "469 - Setting things up 😏",
-  "Kicking up the Chainsaw",
-];
-
 export default function Loader() {
+  const { RANDOM_STRINGS: lines } = strings;
+
   return (
     <Grid
       gap={4}
