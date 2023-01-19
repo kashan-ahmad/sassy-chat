@@ -11,16 +11,29 @@ export default function Chat() {
       justifyContent="center"
     >
       <Card
-        variant="outlined"
+        elevation={1}
         sx={{
-          width: "100vw",
-          height: "100vh",
-          maxWidth: "300px",
-          maxHeight: "600px",
-          boxShadow: 10,
+          boxShadow: 4,
+          position: "relative",
+          border: {
+            xs: "none",
+            sm: "1px solid",
+          },
+          borderColor: {
+            sm: "secondary.dark",
+          },
+          width: {
+            xs: "100vw",
+            sm: "300px",
+          },
+          height: {
+            xs: "100vh",
+            sm: "605px",
+          },
         }}
       >
-        Hello World
+        <img />
+        <CardContent>Hello World</CardContent>
       </Card>
     </Grid>
   );

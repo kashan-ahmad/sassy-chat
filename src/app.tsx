@@ -1,15 +1,14 @@
 import "./app.css";
 
 // Helpers.
-import { useState } from "preact/hooks";
+import useUser from "./useUser";
 import { SassyContext } from "./context";
-import { SassyContextInterface } from "./types";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 
 // Components.
 import Chat from "./Chat";
 import Login from "./Login";
-import { auth } from "./server";
+import Loader from "./Loader";
 
 const darkTheme = createTheme({
   palette: {
@@ -18,20 +17,17 @@ const darkTheme = createTheme({
 });
 
 export default function App() {
-  console.log(auth.currentUser);
-
-  const [user, setUser] = useState<SassyContextInterface["user"]>(
-    auth.currentUser
-  );
-
-  console.log({ user });
+  const [user, setUser] = useUser();
 
   return (
     <ThemeProvider theme={darkTheme}>
       <>
+        {/* <Loader /> */}
         <CssBaseline />
         <SassyContext.Provider value={{ user, setUser }}>
-          {user ? <Chat /> : <Login />}
+          {user.status === "idle" && <Login />}
+          {user.status === "loaded" && <Chat />}
+          {user.status === "loading" && <Loader />}
         </SassyContext.Provider>
       </>
     </ThemeProvider>
