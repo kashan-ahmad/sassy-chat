@@ -18,10 +18,6 @@ export default function Login() {
     setIsLoading(true);
 
     loginWithGoogle({
-      onSuccess: (user) => {
-        setIsLoading(false);
-        setUser(user);
-      },
       onFailure: (message) => {
         setIsLoading(false);
         enqueueSnackbar(message, {

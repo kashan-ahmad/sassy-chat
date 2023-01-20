@@ -1,4 +1,4 @@
-import { auth } from "./server";
+import { addUserToGlobalChannel, auth } from "./server";
 import { SassyContextInterface, SassyUser } from "./types";
 import { onAuthStateChanged } from "firebase/auth";
 import { StateUpdater, useEffect, useState } from "preact/hooks";
@@ -11,11 +11,10 @@ export default function useUser(): [SassyUser, StateUpdater<SassyUser>] {
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
+      // Logged in
       if (user) {
-        setUser({
-          data: user,
-          status: "loaded",
-        });
+        console.log(user);
+        addUserToGlobalChannel({ user });
 
         return;
       }
