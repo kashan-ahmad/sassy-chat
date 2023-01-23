@@ -9,7 +9,6 @@ import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import Chat from "./Chat";
 import Login from "./Login";
 import Loader from "./Loader";
-import { SnackbarProvider } from "notistack";
 
 const darkTheme = createTheme({
   palette: {
@@ -22,14 +21,12 @@ export default function App() {
 
   return (
     <ThemeProvider theme={darkTheme}>
-      <SnackbarProvider>
-        <CssBaseline />
-        <SassyContext.Provider value={{ user, setUser }}>
-          {user.status === "idle" && <Login />}
-          {user.status === "loaded" && <Chat />}
-          {user.status === "loading" && <Loader />}
-        </SassyContext.Provider>
-      </SnackbarProvider>
+      <CssBaseline />
+      <SassyContext.Provider value={{ user, setUser }}>
+        {user.status === "idle" && <Login />}
+        {user.status === "loaded" && <Chat />}
+        {user.status === "loading" && <Loader />}
+      </SassyContext.Provider>
     </ThemeProvider>
   );
 }

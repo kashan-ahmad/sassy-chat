@@ -1,8 +1,11 @@
 import { auth } from "./server";
+import { signOut } from "firebase/auth";
+
+// Components.
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
-import { Button } from "@mui/material";
-import { signOut } from "firebase/auth";
+import Button from "@mui/material/Button";
+import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 
 export default function Chat() {
@@ -41,6 +44,7 @@ export default function Chat() {
           },
         }}
       >
+        <CardHeader />
         <CardContent>Hello World</CardContent>
       </Card>
     </Grid>

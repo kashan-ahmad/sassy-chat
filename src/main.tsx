@@ -1,6 +1,11 @@
 import "./index.css";
 import App from "./App";
 import { render } from "preact";
-import getStrings from "./strings";
+import { SnackbarProvider } from "notistack";
 
-render(<App />, document.getElementById("app") as HTMLElement);
+render(
+  <SnackbarProvider>
+    <App />
+  </SnackbarProvider>,
+  document.getElementById("app") as HTMLElement
+);

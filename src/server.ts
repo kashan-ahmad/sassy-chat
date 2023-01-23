@@ -44,12 +44,19 @@ export function loginWithGoogle({
 }
 
 // Firestore
-export function addUserToGlobalChannel({ user }: { user: User }) {
+export function addUserToGlobalChannel({
+  user,
+  onSuccess,
+  onFailure,
+}: { user: User } & BoolBacks<any>) {
   const globalChannel = doc(db, "channels", "global");
 
   updateDoc(globalChannel, {
     users: arrayUnion(user.uid),
   })
-    .then(() => console.log("Added"))
-    .catch((error) => console.log(error));
+    .then(onSuccess)
+    .catch((error) => {
+      console.error(error);
+      onFailure(strings.DEFAULT_ERROR);
+    });
 }

@@ -5,7 +5,7 @@ export type Language = "en" | "de" | "ar";
 export type Status = "idle" | "loading" | "loaded" | "erred";
 
 export interface BoolBacks<T> {
-  onSuccess: (data: T) => unknown;
+  onSuccess: (data?: T) => unknown;
   onFailure: (message: string) => unknown;
 }
 
