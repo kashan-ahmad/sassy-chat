@@ -13,5 +13,11 @@ export default function getStrings() {
       "469 - Dinge für die Nacht vorbereiten 😏",
       "Die lange scharfe Kettensäge hochfahren",
     ],
+    RANDOM_ERRORS: [
+      "Oh ma gawd, something went wrong",
+      "Oh no, this ain't sassy at all, some shit occurred",
+      "RKO outta nowhere, the app just suffered a fatal blow",
+      "Woah! The sass gods don't want me disturbing them right now",
+    ],
   };
 }

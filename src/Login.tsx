@@ -1,8 +1,7 @@
 import strings from "./strings";
 import { useSnackbar } from "notistack";
-import { SassyContext } from "./context";
+import { useState } from "preact/hooks";
 import { loginWithGoogle } from "./server";
-import { useContext, useState } from "preact/hooks";
 
 // Components.
 import Grid from "@mui/material/Grid";
@@ -11,7 +10,6 @@ import GoogleIcon from "@mui/icons-material/Google";
 
 export default function Login() {
   const { enqueueSnackbar } = useSnackbar();
-  const { setUser } = useContext(SassyContext);
   const [isLoading, setIsLoading] = useState(false);
 
   function onClickListener() {

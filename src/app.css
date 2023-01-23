@@ -1,0 +1,17 @@
+:root {
+  --color-sassy: #ab47bc;
+}
+
+.MuiCard-root {
+  border: 1px solid var(--color-sassy);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+.MuiCardHeader-root {
+  border-bottom: 1px solid var(--color-sassy);
+}
+
+.MuiCardActions-root {
+  border-top: 1px solid var(--color-sassy);
+}

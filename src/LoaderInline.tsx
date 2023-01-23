@@ -1,14 +1,14 @@
 import strings from "./strings";
 import { Grid, Typography, CircularProgress } from "@mui/material";
 
-export default function Loader() {
+export default function LoaderInline() {
   const { RANDOM_STRINGS: lines } = strings;
 
   return (
     <Grid
       gap={4}
+      height="100%"
       display="flex"
-      minHeight="100vh"
       alignItems="center"
       flexDirection="column"
       justifyContent="center"

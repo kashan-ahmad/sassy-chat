@@ -1,13 +1,23 @@
 import strings from "./strings";
 import { initializeApp } from "firebase/app";
-import { BoolBacks, SassyUser } from "./types";
-import { doc, updateDoc, arrayUnion, getFirestore } from "firebase/firestore";
+import { BoolBacks, Channel, SassyUser } from "./types";
+import {
+  doc,
+  updateDoc,
+  arrayUnion,
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import {
   User,
   getAuth,
   signInWithPopup,
   GoogleAuthProvider,
 } from "firebase/auth";
+import { isChannel } from "./utils";
 
 const firebaseConfig = {
   appId: import.meta.env.VITE_APP_ID,
@@ -43,7 +53,7 @@ export function loginWithGoogle({
     });
 }
 
-// Firestore
+// Channels
 export function addUserToGlobalChannel({
   user,
   onSuccess,
@@ -55,6 +65,41 @@ export function addUserToGlobalChannel({
     users: arrayUnion(user.uid),
   })
     .then(onSuccess)
+    .catch((error) => {
+      console.error(error);
+      onFailure(strings.DEFAULT_ERROR);
+    });
+}
+
+export function getUserChannels({
+  user,
+  onSuccess,
+  onFailure,
+}: { user: User } & BoolBacks<Channel[]>) {
+  const channelsRef = collection(db, "channels");
+
+  const queryRef = query(
+    channelsRef,
+    where("users", "array-contains", user.uid)
+  );
+
+  getDocs(queryRef)
+    .then((docs) => {
+      const channels: unknown[] = [];
+
+      // Extract the documents' data
+      docs.forEach((doc) => channels.push(doc.data()));
+
+      // Type guard
+      if (isChannel(channels[0])) {
+        onSuccess(channels as Channel[]);
+        return;
+      }
+
+      // Type error
+      console.error("TypeError: doc isn't of type Channel");
+      onFailure(strings.DEFAULT_ERROR);
+    })
     .catch((error) => {
       console.error(error);
       onFailure(strings.DEFAULT_ERROR);
