@@ -2,6 +2,23 @@
   --color-sassy: #ab47bc;
 }
 
+* {
+  scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+  width: 0.5rem;
+}
+
+*::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+}
+
 .MuiCard-root {
   border: 1px solid var(--color-sassy);
   display: grid;

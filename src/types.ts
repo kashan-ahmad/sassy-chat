@@ -28,8 +28,9 @@ export type Message = {
 };
 
 export type Channel = {
-  users: User["uid"][];
+  label: string;
   messages: Message[];
+  users: User["uid"][];
 };
 
 export type SassyChannel = Fetchable<Channel[]>;
