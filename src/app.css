@@ -32,3 +32,10 @@
 .MuiCardActions-root {
   border-top: 1px solid var(--color-sassy);
 }
+
+.Message {
+  background-color: var(--color-sassy);
+}
+
+.Message > button {
+}

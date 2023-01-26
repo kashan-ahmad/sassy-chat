@@ -1,6 +1,6 @@
-import { auth } from "./server";
+import { logout } from "./server";
 import useToggle from "./useToggle";
-import { signOut } from "firebase/auth";
+import { useSnackbar } from "notistack";
 
 // Components.
 import Menu from "@mui/material/Menu";
@@ -18,6 +18,7 @@ import MoreVert from "@mui/icons-material/MoreVert";
 import logoImage from "./assets/logo.svg";
 
 export default function ChatBoxHeader() {
+  const { enqueueSnackbar } = useSnackbar();
   const { isOpen, handleClick, handleClose, anchorEl } = useToggle();
 
   return (
@@ -72,7 +73,10 @@ export default function ChatBoxHeader() {
             <MenuItem
               onClick={() =>
                 window.confirm("Are you sure you want to log out?") &&
-                signOut(auth)
+                logout({
+                  onFailure: (message) =>
+                    enqueueSnackbar(message, { type: "error" }),
+                })
               }
             >
               <ListItemIcon>

@@ -16,6 +16,7 @@ import {
   getAuth,
   signInWithPopup,
   GoogleAuthProvider,
+  signOut,
 } from "firebase/auth";
 import { isChannel } from "./utils";
 
@@ -51,6 +52,17 @@ export function loginWithGoogle({
       console.error(error);
       onFailure(strings.DEFAULT_ERROR);
     });
+}
+
+export function logout({
+  onFailure,
+}: {
+  onFailure: BoolBacks<any>["onFailure"];
+}) {
+  signOut(auth).catch((reason) => {
+    console.error(reason);
+    onFailure(strings.DEFAULT_ERROR);
+  });
 }
 
 // Channels

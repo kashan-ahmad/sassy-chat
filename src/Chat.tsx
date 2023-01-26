@@ -1,47 +1,16 @@
-import { SassyChannel } from "./types";
-import { SassyContext } from "./context";
-import { getUserChannels } from "./server";
-import { useContext, useEffect, useState } from "preact/hooks";
+import { Channel } from "./types";
+import { useState } from "preact/hooks";
 
 // Components
 import ChatBox from "./ChatBox";
 import Grid from "@mui/material/Grid";
-import List from "@mui/material/List";
-import ErrorInline from "./ErrorInline";
-import LoaderInline from "./LoaderInline";
-import ChatBoxHeader from "./ChatBoxHeader";
-import ListItem from "@mui/material/ListItem";
-import CardContent from "@mui/material/CardContent";
-import PublicIcon from "@mui/icons-material/Public";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemButton from "@mui/material/ListItemButton";
+import ChatBoxChannel from "./ChatBoxChannel";
+import ChatBoxChannels from "./ChatBoxChannels";
 
 export default function Chat() {
-  const { user } = useContext(SassyContext);
-  const [channels, setChannels] = useState<SassyChannel>({
-    data: [],
-    status: "loading",
-  });
+  const [selectedChannel, setSelectedChannel] = useState<Channel>();
 
-  useEffect(() => {
-    if (!user.data) return;
-
-    getUserChannels({
-      user: user.data,
-      onSuccess: (data) =>
-        setChannels({
-          data: data!,
-          status: "loaded",
-        }),
-      onFailure: () => {
-        setChannels({
-          data: [],
-          status: "erred",
-        });
-      },
-    });
-  }, []);
+  console.log(selectedChannel);
 
   return (
     <Grid
@@ -51,44 +20,15 @@ export default function Chat() {
       justifyContent="center"
     >
       <ChatBox>
-        <ChatBoxHeader />
-        {channels.status === "erred" && (
-          <CardContent>
-            <ErrorInline />
-          </CardContent>
-        )}
-        {channels.status === "loading" && (
-          <CardContent>
-            <LoaderInline />
-          </CardContent>
-        )}
-        {channels.status === "loaded" && (
-          <List
-            sx={{
-              height: "100%",
-              overflow: "auto",
-            }}
-          >
-            {channels.data.map((channel, i) => (
-              <ListItem key={i} disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <PublicIcon />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={channel.label}
-                    secondary={
-                      channel.messages.length > 0
-                        ? // Text of the last text sent in this channel
-                          channel.messages[channel.messages.length - 1].text
-                        : // Default text
-                          "💀 Dead chat"
-                    }
-                  />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
+        {selectedChannel ? (
+          <ChatBoxChannel
+            selectedChannel={selectedChannel}
+            onDeSelectChannel={() => setSelectedChannel(undefined)}
+          />
+        ) : (
+          <ChatBoxChannels
+            onSelectChannel={(channel: Channel) => setSelectedChannel(channel)}
+          />
         )}
       </ChatBox>
     </Grid>

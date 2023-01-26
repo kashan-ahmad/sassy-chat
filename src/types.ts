@@ -33,4 +33,4 @@ export type Channel = {
   users: User["uid"][];
 };
 
-export type SassyChannel = Fetchable<Channel[]>;
+export type SassyChannels = Fetchable<Channel[]>;
