@@ -19,6 +19,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { isChannel } from "./utils";
+import userConverter from "./UserConverter";
 
 const firebaseConfig = {
   appId: import.meta.env.VITE_APP_ID,

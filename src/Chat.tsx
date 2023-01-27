@@ -10,8 +10,6 @@ import ChatBoxChannels from "./ChatBoxChannels";
 export default function Chat() {
   const [selectedChannel, setSelectedChannel] = useState<Channel>();
 
-  console.log(selectedChannel);
-
   return (
     <Grid
       display="flex"

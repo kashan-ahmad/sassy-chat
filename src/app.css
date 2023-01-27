@@ -34,8 +34,25 @@
 }
 
 .Message {
-  background-color: var(--color-sassy);
+  position: relative;
 }
 
-.Message > button {
+.Message::before {
+  content: "";
+  position: absolute;
+}
+
+.Message > .MuiButtonBase-root {
+  margin: 0 0.5rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 0.15rem;
+  max-width: 80%;
+
+  /* Prevent the button from growing to the max width. */
+  flex-grow: 0;
+}
+
+.Message.Message-selected {
+  /* Makes the selected/user's message appear on the right. */
+  justify-content: flex-end;
 }

@@ -79,7 +79,7 @@ export default function ChatBoxChannels({
                   primary={channel.label}
                   secondary={
                     channel.messages.length > 0
-                      ? // Text of the last text sent in this channel
+                      ? // Text of the last message sent in this channel
                         channel.messages[channel.messages.length - 1].text
                       : // Default text
                         "💀 Dead chat"

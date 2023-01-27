@@ -23,17 +23,42 @@ export default function ChatBoxChannel({
       <ChatBoxHeader />
       <List
         sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "8px",
           height: "100%",
           overflow: "auto",
         }}
       >
-        {selectedChannel.messages.map((message, i) => (
-          <ListItem key={i} disablePadding className="Message">
-            <ListItemButton selected={user.data!.uid === message.from}>
-              <ListItemText primary={message.text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        {selectedChannel.messages.map((message, i) => {
+          const isSelected = user.data!.uid === message.from.uid;
+
+          return (
+            <ListItem
+              key={i}
+              disablePadding
+              className={`Message ${isSelected ? "Message-selected" : ""}`}
+            >
+              <ListItemButton
+                sx={{
+                  bgColor: "black",
+                }}
+              >
+                <ListItemText
+                  primary={message.from.displayName}
+                  primaryTypographyProps={{
+                    fontSize: ".75rem",
+                    textAlign: isSelected ? "right" : "left",
+                  }}
+                  secondary={message.text}
+                  secondaryTypographyProps={{
+                    textAlign: isSelected ? "right" : "left",
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
       </List>
     </>
   );

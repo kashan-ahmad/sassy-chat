@@ -22,13 +22,14 @@ export type SassyContextInterface = {
 };
 
 export type Message = {
-  createdAt: string;
-  from: User["uid"];
+  from: User;
   text: string;
+  createdAt: string;
 };
 
 export type Channel = {
   label: string;
+  isGroup: boolean;
   messages: Message[];
   users: User["uid"][];
 };
