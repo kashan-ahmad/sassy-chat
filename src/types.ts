@@ -1,4 +1,5 @@
 import { User } from "firebase/auth";
+import { Timestamp } from "firebase/firestore";
 
 export type Language = "en" | "de" | "ar";
 
@@ -24,7 +25,7 @@ export type SassyContextInterface = {
 export type Message = {
   from: User;
   text: string;
-  createdAt: string;
+  createdAt: Timestamp;
 };
 
 export type Channel = {

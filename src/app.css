@@ -35,6 +35,7 @@
 
 .Message {
   position: relative;
+  align-items: flex-start !important;
 }
 
 .Message::before {
@@ -42,8 +43,11 @@
   position: absolute;
 }
 
+.Message > * {
+  margin: 0 0.5rem !important;
+}
+
 .Message > .MuiButtonBase-root {
-  margin: 0 0.5rem;
   padding: 0.1rem 0.5rem;
   border-radius: 0.15rem;
   max-width: 80%;
@@ -54,5 +58,5 @@
 
 .Message.Message-selected {
   /* Makes the selected/user's message appear on the right. */
-  justify-content: flex-end;
+  align-items: flex-end !important;
 }

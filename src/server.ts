@@ -110,7 +110,7 @@ export function getUserChannels({
       }
 
       // Type error
-      console.error("TypeError: doc isn't of type Channel");
+      console.error("TypeScriptError: doc isn't of type Channel");
       onFailure(strings.DEFAULT_ERROR);
     })
     .catch((error) => {
