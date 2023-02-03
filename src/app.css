@@ -26,6 +26,7 @@
 }
 
 .MuiCardHeader-root {
+  height: 70px;
   border-bottom: 1px solid var(--color-sassy);
 }
 

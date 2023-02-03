@@ -1,6 +1,6 @@
 import { SassyContext } from "./context";
 import { Channel } from "./types";
-import { useContext } from "preact/hooks";
+import { useContext, useEffect } from "preact/hooks";
 
 // Components
 import Message from "./Message";
@@ -19,9 +19,23 @@ export default function ChatBoxChannel({
 }) {
   const { user } = useContext(SassyContext);
 
+  // Effect: Close the channel on escape.
+  useEffect(() => {
+    function onPressEscape(e: KeyboardEvent) {
+      if (e.key == "Escape") onDeSelectChannel();
+    }
+
+    window.addEventListener("keydown", onPressEscape);
+
+    return () => window.removeEventListener("keydown", onPressEscape);
+  }, []);
+
   return (
     <>
-      <ChannelHeader {...{ onDeSelectChannel }} />
+      <ChannelHeader
+        channel={selectedChannel}
+        onDeSelectChannel={onDeSelectChannel}
+      />
       <List
         className="chatBoxMessageList"
         sx={{

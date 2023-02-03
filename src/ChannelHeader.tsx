@@ -14,10 +14,13 @@ import Info from "@mui/icons-material/Info";
 import { ArrowBack } from "@mui/icons-material";
 import Logout from "@mui/icons-material/Logout";
 import MoreVert from "@mui/icons-material/MoreVert";
+import { Channel } from "./types";
 
 export default function ChannelHeader({
+  channel,
   onDeSelectChannel,
 }: {
+  channel: Channel,
   onDeSelectChannel: Function;
 }) {
   const { enqueueSnackbar } = useSnackbar();
@@ -25,6 +28,7 @@ export default function ChannelHeader({
 
   return (
     <CardHeader
+    title={channel.label}
       avatar={
         <IconButton onClick={() => onDeSelectChannel()}>
           <ArrowBack />
