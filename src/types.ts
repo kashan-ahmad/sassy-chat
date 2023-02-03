@@ -23,16 +23,22 @@ export type SassyContextInterface = {
 };
 
 export type Message = {
-  from: User;
   text: string;
+  from: User["uid"];
   createdAt: Timestamp;
 };
 
+/**
+ * A user as stored in a channel.
+ */
+export type ChannelUser = Pick<User, "displayName" | "photoURL">;
+
 export type Channel = {
+  id: string;
   label: string;
   isGroup: boolean;
   messages: Message[];
-  users: User["uid"][];
+  users: Record<User["uid"], ChannelUser>;
 };
 
 export type SassyChannels = Fetchable<Channel[]>;

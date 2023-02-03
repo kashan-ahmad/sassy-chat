@@ -1,11 +1,13 @@
-import { Channel } from "./types";
 import { SassyContext } from "./context";
+import { Channel } from "./types";
 import { useContext } from "preact/hooks";
 
 // Components
 import Message from "./Message";
 import List from "@mui/material/List";
+import ChatBoxForm from "./ChatBoxForm";
 import ChatBoxHeader from "./ChatBoxHeader";
+import { CardActions } from "@mui/material";
 
 export default function ChatBoxChannel({
   selectedChannel,
@@ -20,6 +22,7 @@ export default function ChatBoxChannel({
     <>
       <ChatBoxHeader />
       <List
+        className="chatBoxMessageList"
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -32,10 +35,14 @@ export default function ChatBoxChannel({
           <Message
             key={i}
             {...message}
-            isSentByUser={user.data!.uid === message.from.uid}
+            channelUsers={selectedChannel.users}
+            isSentByUser={user.data!.uid === message.from}
           />
         ))}
       </List>
+      <CardActions>
+        <ChatBoxForm {...{ selectedChannel }} />
+      </CardActions>
     </>
   );
 }

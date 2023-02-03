@@ -1,15 +1,17 @@
 import strings from "./strings";
 import { initializeApp } from "firebase/app";
-import { BoolBacks, Channel, SassyUser } from "./types";
+import { BoolBacks, Channel, Message, SassyUser } from "./types";
 import {
   doc,
-  updateDoc,
-  arrayUnion,
-  getFirestore,
-  collection,
   query,
   where,
   getDocs,
+  updateDoc,
+  arrayUnion,
+  collection,
+  getFirestore,
+  onSnapshot,
+  Unsubscribe,
 } from "firebase/firestore";
 import {
   User,
@@ -19,7 +21,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { isChannel } from "./utils";
-import userConverter from "./UserConverter";
+import { userToChannelUser } from "./userConverter";
 
 const firebaseConfig = {
   appId: import.meta.env.VITE_APP_ID,
@@ -36,6 +38,7 @@ export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
 export const authProvider = new GoogleAuthProvider();
+let unsubscribe: Unsubscribe;
 
 // Auth
 export function loginWithGoogle({
@@ -74,8 +77,10 @@ export function addUserToGlobalChannel({
 }: { user: User } & BoolBacks<any>) {
   const globalChannel = doc(db, "channels", "global");
 
+  const key = `users.${user.uid}`;
+
   updateDoc(globalChannel, {
-    users: arrayUnion(user.uid),
+    [key]: userToChannelUser(user),
   })
     .then(onSuccess)
     .catch((error) => {
@@ -91,17 +96,15 @@ export function getUserChannels({
 }: { user: User } & BoolBacks<Channel[]>) {
   const channelsRef = collection(db, "channels");
 
-  const queryRef = query(
-    channelsRef,
-    where("users", "array-contains", user.uid)
-  );
+  // Select channels where `users.uid` isn't empty.
+  const queryRef = query(channelsRef, where(`users.${user.uid}`, "!=", ""));
 
   getDocs(queryRef)
     .then((docs) => {
       const channels: unknown[] = [];
 
       // Extract the documents' data
-      docs.forEach((doc) => channels.push(doc.data()));
+      docs.forEach((doc) => channels.push({ ...doc.data(), id: doc.id }));
 
       // Type guard
       if (isChannel(channels[0])) {
@@ -117,4 +120,61 @@ export function getUserChannels({
       console.error(error);
       onFailure(strings.DEFAULT_ERROR);
     });
+}
+
+export function sendMessageToChannel({
+  channel,
+  message,
+  onSuccess,
+  onFailure,
+}: BoolBacks<any> & {
+  message: Message;
+  channel: Channel;
+}) {
+  const channelRef = doc(db, "channels", channel.id);
+
+  updateDoc(channelRef, {
+    messages: arrayUnion(message),
+  })
+    .then(onSuccess)
+    .catch((error) => {
+      console.error(error);
+      onFailure(strings.DEFAULT_ERROR);
+    });
+}
+
+/**
+ * Subscribes to a channel for real-time updates.
+ */
+export function subscribeToChannel({
+  channel,
+  onSuccess,
+  onFailure,
+}: {
+  channel: Channel;
+} & BoolBacks<Channel>) {
+  unsubscribe = onSnapshot(doc(db, "channels", channel.id), (doc) => {
+    const updatedChannel = {
+      ...(doc.data() as Channel),
+      id: doc.id,
+    };
+
+    // Type guard
+    if (isChannel(updatedChannel)) {
+      onSuccess(updatedChannel);
+      return;
+    }
+
+    // Type error
+    console.error("TypeScriptError: doc isn't of type Channel");
+    onFailure(strings.DEFAULT_ERROR);
+  });
+}
+
+/**
+ * Unsubscribes from a subscribed channel. Since multi-channel subscription
+ * isn't yet supported, the default subscribed channel is unsubscribed from.
+ */
+export function unsubscribeFromChannel() {
+  unsubscribe();
 }

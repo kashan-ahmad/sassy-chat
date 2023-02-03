@@ -7,24 +7,31 @@ import {
 } from "@mui/material";
 
 // Types.
-import type { Message } from "./types";
-import { useRef, useState } from "preact/hooks";
+import { useState } from "preact/hooks";
+import type { Channel, ChannelUser, Message } from "./types";
 import { AccessTimeFilled } from "@mui/icons-material";
 
 export type MessageProps = {
   isSentByUser?: boolean;
+  channelUsers: Channel["users"];
 } & Message;
+
+let date = new Date();
 
 export default function Message({
   from,
   text,
   createdAt,
+  channelUsers,
   isSentByUser,
 }: MessageProps) {
-  const date = useRef(new Date());
+  // Set the time for each message.
+  date.setTime(createdAt.seconds * 1000);
+
+  // The collapse's state.
   const [areDetailsShown, setAreDetailsShown] = useState(false);
 
-  date.current.setTime(createdAt.seconds);
+  const channelUser = channelUsers[from];
 
   return (
     <ListItem
@@ -41,7 +48,7 @@ export default function Message({
         onClick={() => setAreDetailsShown(!areDetailsShown)}
       >
         <ListItemText
-          primary={from.displayName}
+          primary={channelUser.displayName}
           primaryTypographyProps={{
             fontSize: ".75rem",
             textAlign: isSentByUser ? "right" : "left",
@@ -54,15 +61,15 @@ export default function Message({
       </ListItemButton>
       <Collapse direction="down" in={areDetailsShown}>
         <Typography
-          variant="overline"
-          fontStyle="italic"
-          display="flex"
-          flexDirection={isSentByUser ? "row-reverse" : "row"}
-          alignItems="center"
           gap="4px"
+          display="flex"
+          color="grey.500"
+          variant="overline"
+          alignItems="center"
+          flexDirection={isSentByUser ? "row-reverse" : "row"}
         >
           <AccessTimeFilled fontSize="inherit" />
-          {date.current.toLocaleTimeString()}
+          {date.toLocaleTimeString()}
         </Typography>
       </Collapse>
     </ListItem>

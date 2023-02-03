@@ -77,6 +77,9 @@ export default function ChatBoxChannels({
                 </ListItemIcon>
                 <ListItemText
                   primary={channel.label}
+                  secondaryTypographyProps={{
+                    noWrap: true,
+                  }}
                   secondary={
                     channel.messages.length > 0
                       ? // Text of the last message sent in this channel
