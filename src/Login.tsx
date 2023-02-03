@@ -8,6 +8,10 @@ import Grid from "@mui/material/Grid";
 import LoadingButton from "@mui/lab/LoadingButton";
 import GoogleIcon from "@mui/icons-material/Google";
 
+// Static.
+import logoImage from "./assets/logo.svg";
+import { Box } from "@mui/material";
+
 export default function Login() {
   const { enqueueSnackbar } = useSnackbar();
   const [isLoading, setIsLoading] = useState(false);
@@ -32,15 +36,18 @@ export default function Login() {
       alignItems="center"
       justifyContent="center"
     >
-      <LoadingButton
-        color="error"
-        variant="contained"
-        loading={isLoading}
-        startIcon={<GoogleIcon />}
-        onClick={() => onClickListener()}
-      >
-        {strings.LOGIN}
-      </LoadingButton>
+      <Box display="flex" flexDirection="column" alignItems="center" gap="1rem">
+        <img src={logoImage} width="100" />
+        <LoadingButton
+          color="secondary"
+          variant="contained"
+          loading={isLoading}
+          startIcon={<GoogleIcon />}
+          onClick={() => onClickListener()}
+        >
+          {strings.LOGIN}
+        </LoadingButton>
+      </Box>
     </Grid>
   );
 }

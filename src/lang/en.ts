@@ -7,17 +7,17 @@ export default function getStrings() {
     LOGIN: "Login with google",
     LOADING: "Loading...",
     RANDOM_STRINGS: [
-      "Swinging the Hard Leviathan Axe",
-      "Calling out the Big Fat Mjolnir",
-      "Praying to the All Father",
-      "469 - Setting things up for the night 😏",
-      "Kicking up the Long Sharp Chainsaw",
+      "Polishing my nails 💅",
+      "Eating some brains 🧠",
+      "Sending FBI on your location 💀",
+      "Killing a fat politician 😏",
+      "Ignore these random messages 🗿",
     ],
     RANDOM_ERRORS: [
-      "Oh ma gawd, something went wrong",
-      "Oh no, this ain't sassy at all, some shit occurred",
-      "RKO outta nowhere, the app just suffered a fatal blow",
-      "Woah! The sass gods don't want me disturbing them right now",
+      "Oh my god dude! something went wrong 💀",
+      "Naw man 💀, this ain't sassy at all, some shit occurred",
+      "RKO outta nowhere 💀 the app just suffered a fatal blow",
+      "The sass gods don't want me disturbing them right now 💀",
     ],
   };
 }

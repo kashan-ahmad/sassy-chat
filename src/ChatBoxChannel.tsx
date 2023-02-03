@@ -6,21 +6,22 @@ import { useContext } from "preact/hooks";
 import Message from "./Message";
 import List from "@mui/material/List";
 import ChatBoxForm from "./ChatBoxForm";
-import ChatBoxHeader from "./ChatBoxHeader";
+import ChatBoxEmpty from "./ChatBoxEmpty";
 import { CardActions } from "@mui/material";
+import ChannelHeader from "./ChannelHeader";
 
 export default function ChatBoxChannel({
   selectedChannel,
   onDeSelectChannel,
 }: {
   selectedChannel: Channel;
-  onDeSelectChannel: () => unknown;
+  onDeSelectChannel: Function;
 }) {
   const { user } = useContext(SassyContext);
 
   return (
     <>
-      <ChatBoxHeader />
+      <ChannelHeader {...{ onDeSelectChannel }} />
       <List
         className="chatBoxMessageList"
         sx={{
@@ -31,14 +32,18 @@ export default function ChatBoxChannel({
           overflow: "auto",
         }}
       >
-        {selectedChannel.messages.map((message, i) => (
-          <Message
-            key={i}
-            {...message}
-            channelUsers={selectedChannel.users}
-            isSentByUser={user.data!.uid === message.from}
-          />
-        ))}
+        {selectedChannel.messages.length === 0 ? (
+          <ChatBoxEmpty />
+        ) : (
+          selectedChannel.messages.map((message, i) => (
+            <Message
+              key={i}
+              {...message}
+              channelUsers={selectedChannel.users}
+              isSentByUser={user.data!.uid === message.from}
+            />
+          ))
+        )}
       </List>
       <CardActions>
         <ChatBoxForm {...{ selectedChannel }} />
