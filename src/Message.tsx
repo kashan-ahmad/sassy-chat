@@ -29,6 +29,12 @@ let date = new Date();
  */
 let currentUserID = "";
 
+/**
+ * Variable to check if a message is the first message of a user from a
+ * sequence of messages from the same user.
+ */
+let isFirstMessageOfUser = false;
+
 export default function Message({
   from,
   text,
@@ -45,8 +51,8 @@ export default function Message({
   // Extract the displayName of the current user.
   const { displayName } = channelUsers[from];
 
-  // Every message isn't the first one until we know it's the first one.
-  let isFirstMessageOfUser = false;
+  // It's not the first message by default.
+  isFirstMessageOfUser = false;
 
   // First-case scenario, when the first message gets rendered, currentUserID
   // is empty.
@@ -86,6 +92,7 @@ export default function Message({
             // If the sender is different from the previous sender
             // + It's the sender's first message
             // = Display the sender's name.
+            //from !== currentUserID && isFirstMessageOfUser ? displayName : ""
             from === currentUserID && !isFirstMessageOfUser ? "" : displayName
           }
           primaryTypographyProps={{
