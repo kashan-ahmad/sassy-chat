@@ -1,6 +1,6 @@
 import { SassyContext } from "./context";
+import { Channel, NewMessage } from "./types";
 import { useContext, useState } from "preact/hooks";
-import { Channel, Message as MessageType } from "./types";
 
 // Components
 import { useSnackbar } from "notistack";
@@ -29,7 +29,7 @@ export default function ChatBoxForm({
 
     if (!typedMessage) return;
 
-    const message: MessageType = {
+    const message: NewMessage = {
       text: typedMessage,
       from: user.data!.uid,
       createdAt: Timestamp.now(),

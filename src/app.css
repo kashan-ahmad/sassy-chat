@@ -4,19 +4,16 @@
 
 * {
   scrollbar-width: thin;
+  scrollbar-color: darkgray transparent;
 }
 
 *::-webkit-scrollbar {
-  width: 0.5rem;
-}
-
-*::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  width: 1px;
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: darkgrey;
-  outline: 1px solid slategrey;
+  background-color: darkgray;
+  outline: 1px solid darkgray;
 }
 
 .MuiCard-root {

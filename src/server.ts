@@ -1,6 +1,6 @@
 import strings from "./strings";
 import { initializeApp } from "firebase/app";
-import { BoolBacks, Channel, Message, SassyUser } from "./types";
+import { BoolBacks, Channel, Message, NewMessage, SassyUser } from "./types";
 import {
   doc,
   query,
@@ -12,6 +12,8 @@ import {
   getFirestore,
   onSnapshot,
   Unsubscribe,
+  addDoc,
+  orderBy,
 } from "firebase/firestore";
 import {
   User,
@@ -20,7 +22,12 @@ import {
   GoogleAuthProvider,
   signOut,
 } from "firebase/auth";
-import { isChannel } from "./utils";
+import {
+  isChannel,
+  isMessage,
+  parseChannelsFromDocs,
+  parseMessagesFromDocs,
+} from "./utils";
 import { userToChannelUser } from "./userConverter";
 
 const firebaseConfig = {
@@ -89,53 +96,78 @@ export function addUserToGlobalChannel({
     });
 }
 
+/**
+ * Get the channels associated with a user.
+ */
 export function getUserChannels({
   user,
   onSuccess,
   onFailure,
 }: { user: User } & BoolBacks<Channel[]>) {
-  const channelsRef = collection(db, "channels");
+  const channelsCollection = collection(db, "channels");
 
   // Select channels where `users.uid` isn't empty.
-  const queryRef = query(channelsRef, where(`users.${user.uid}`, "!=", ""));
+  // In other words, channels with the current user in their users.
+  const queryRef = query(
+    channelsCollection,
+    where(`users.${user.uid}`, "!=", "")
+  );
 
   getDocs(queryRef)
-    .then((docs) => {
-      const channels: unknown[] = [];
-
-      // Extract the documents' data
-      docs.forEach((doc) => channels.push({ ...doc.data(), id: doc.id }));
-
-      // Type guard
-      if (isChannel(channels[0])) {
-        onSuccess(channels as Channel[]);
-        return;
-      }
-
-      // Type error
-      console.error("TypeScriptError: doc isn't of type Channel");
-      onFailure(strings.DEFAULT_ERROR);
-    })
+    .then((docs) =>
+      parseChannelsFromDocs({
+        docs,
+        onSuccess,
+        onFailure,
+      })
+    )
     .catch((error) => {
       console.error(error);
       onFailure(strings.DEFAULT_ERROR);
     });
 }
 
+/**
+ * Get messages of a channel.
+ */
+export function getChannelMessages({
+  channel,
+  onSuccess,
+  onFailure,
+}: {
+  channel: Channel;
+} & BoolBacks<Message[]>) {
+  const messagesCollection = collection(db, "channels", channel.id, "messages");
+
+  getDocs(query(messagesCollection))
+    .then((docs) =>
+      parseMessagesFromDocs({
+        docs,
+        onSuccess,
+        onFailure,
+      })
+    )
+    .catch((error) => {
+      console.error(error);
+      onFailure(strings.DEFAULT_ERROR);
+    });
+}
+
+/**
+ * Add a message to a channel's message collection.
+ */
 export function sendMessageToChannel({
   channel,
   message,
   onSuccess,
   onFailure,
 }: BoolBacks<any> & {
-  message: Message;
+  message: NewMessage;
   channel: Channel;
 }) {
-  const channelRef = doc(db, "channels", channel.id);
+  const messagesCollection = collection(db, "channels", channel.id, "messages");
 
-  updateDoc(channelRef, {
-    messages: arrayUnion(message),
-  })
+  addDoc(messagesCollection, message)
     .then(onSuccess)
     .catch((error) => {
       console.error(error);
@@ -152,22 +184,18 @@ export function subscribeToChannel({
   onFailure,
 }: {
   channel: Channel;
-} & BoolBacks<Channel>) {
-  unsubscribe = onSnapshot(doc(db, "channels", channel.id), (doc) => {
-    const updatedChannel = {
-      ...(doc.data() as Channel),
-      id: doc.id,
-    };
+} & BoolBacks<Message[]>) {
+  const messagesCollection = collection(db, "channels", channel.id, "messages");
 
-    // Type guard
-    if (isChannel(updatedChannel)) {
-      onSuccess(updatedChannel);
-      return;
-    }
+  const messagesQuery = query(messagesCollection, orderBy("createdAt"));
 
-    // Type error
-    console.error("TypeScriptError: doc isn't of type Channel");
-    onFailure(strings.DEFAULT_ERROR);
+  // Instantiate the listener on the messages collection.
+  unsubscribe = onSnapshot(messagesQuery, (docs) => {
+    parseMessagesFromDocs({
+      docs,
+      onSuccess,
+      onFailure,
+    });
   });
 }
 

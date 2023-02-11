@@ -8,10 +8,11 @@ import {
 
 // Types.
 import { useState } from "preact/hooks";
-import type { Channel, ChannelUser, Message } from "./types";
+import type { Channel, Message } from "./types";
 import { AccessTimeFilled } from "@mui/icons-material";
 
 export type MessageProps = {
+  displayName?: string;
   isSentByUser?: boolean;
   channelUsers: Channel["users"];
 } & Message;
@@ -22,24 +23,10 @@ export type MessageProps = {
  */
 let date = new Date();
 
-/**
- * The currently active user/sender. This is used to make the first message of a
- * user has their name on the message and stop the consequent ones from showing
- * a name, simulating a chat-like behavior.
- */
-let currentUserID = "";
-
-/**
- * Variable to check if a message is the first message of a user from a
- * sequence of messages from the same user.
- */
-let isFirstMessageOfUser = false;
-
 export default function Message({
-  from,
   text,
   createdAt,
-  channelUsers,
+  displayName,
   isSentByUser,
 }: MessageProps) {
   // Set the time for each message.
@@ -47,31 +34,6 @@ export default function Message({
 
   // The collapse's state.
   const [areDetailsShown, setAreDetailsShown] = useState(false);
-
-  // Extract the displayName of the current user.
-  const { displayName } = channelUsers[from];
-
-  // It's not the first message by default.
-  isFirstMessageOfUser = false;
-
-  // First-case scenario, when the first message gets rendered, currentUserID
-  // is empty.
-  if (!currentUserID) {
-    // In this case, we set the message sender's ID as the currently active
-    // user ID.
-    currentUserID = from;
-
-    // And since it's the first message of this user;
-    isFirstMessageOfUser = true;
-  }
-
-  // The currently active user ID doesn't match the sender's ID.
-  // Which means this sender is different than the previous one.
-  if (currentUserID != from) {
-    // Let's set this sender as the currently active sender.
-    currentUserID = from;
-    isFirstMessageOfUser = true;
-  }
 
   return (
     <ListItem
@@ -88,13 +50,7 @@ export default function Message({
         onClick={() => setAreDetailsShown(!areDetailsShown)}
       >
         <ListItemText
-          primary={
-            // If the sender is different from the previous sender
-            // + It's the sender's first message
-            // = Display the sender's name.
-            //from !== currentUserID && isFirstMessageOfUser ? displayName : ""
-            from === currentUserID && !isFirstMessageOfUser ? "" : displayName
-          }
+          primary={displayName}
           primaryTypographyProps={{
             color: "secondary",
             fontSize: ".75rem",

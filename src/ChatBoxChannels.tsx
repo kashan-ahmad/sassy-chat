@@ -5,7 +5,6 @@ import { useContext, useEffect, useState } from "preact/hooks";
 
 // Components
 import List from "@mui/material/List";
-import ErrorInline from "./ErrorInline";
 import LoaderInline from "./LoaderInline";
 import ChatBoxHeader from "./ChatBoxHeader";
 import ListItem from "@mui/material/ListItem";
@@ -14,6 +13,7 @@ import PublicIcon from "@mui/icons-material/Public";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemButton from "@mui/material/ListItemButton";
+import ErrorInline from "./ErrorInline";
 
 export default function ChatBoxChannels({
   onSelectChannel,
@@ -77,16 +77,16 @@ export default function ChatBoxChannels({
                 </ListItemIcon>
                 <ListItemText
                   primary={channel.label}
-                  secondaryTypographyProps={{
-                    noWrap: true,
-                  }}
-                  secondary={
-                    channel.messages.length > 0
-                      ? // Text of the last message sent in this channel
-                        channel.messages[channel.messages.length - 1].text
-                      : // Default text
-                        "💀 Dead chat"
-                  }
+                  // secondaryTypographyProps={{
+                  //   noWrap: true,
+                  // }}
+                  // secondary={
+                  //   channel.messages.length > 0
+                  //     ? // Text of the last message sent in this channel
+                  //       channel.messages[channel.messages.length - 1].text
+                  //     : // Default text
+                  //       "💀 Dead chat"
+                  // }
                 />
               </ListItemButton>
             </ListItem>
