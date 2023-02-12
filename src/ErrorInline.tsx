@@ -9,6 +9,7 @@ export default function ErrorInline() {
   return (
     <Grid
       gap={4}
+      padding={4}
       height="100%"
       display="flex"
       alignItems="center"

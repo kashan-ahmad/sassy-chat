@@ -14,6 +14,7 @@ import {
   OutlinedInput,
   InputAdornment,
 } from "@mui/material";
+import { getMessageUserFromUser } from "./userConverter";
 
 export default function ChatBoxForm({
   selectedChannel,
@@ -30,9 +31,10 @@ export default function ChatBoxForm({
     if (!typedMessage) return;
 
     const message: NewMessage = {
+      variant: "plain",
       text: typedMessage,
-      from: user.data!.uid,
       createdAt: Timestamp.now(),
+      from: getMessageUserFromUser(user.data!),
     };
 
     sendMessageToChannel({

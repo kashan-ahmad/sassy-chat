@@ -20,7 +20,7 @@ export default function ChannelHeader({
   channel,
   onDeSelectChannel,
 }: {
-  channel: Channel,
+  channel: Channel;
   onDeSelectChannel: Function;
 }) {
   const { enqueueSnackbar } = useSnackbar();
@@ -28,7 +28,7 @@ export default function ChannelHeader({
 
   return (
     <CardHeader
-    title={channel.label}
+      title={channel.label}
       avatar={
         <IconButton onClick={() => onDeSelectChannel()}>
           <ArrowBack />

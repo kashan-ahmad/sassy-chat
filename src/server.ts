@@ -14,6 +14,7 @@ import {
   Unsubscribe,
   addDoc,
   orderBy,
+  getDoc,
 } from "firebase/firestore";
 import {
   User,
@@ -28,7 +29,7 @@ import {
   parseChannelsFromDocs,
   parseMessagesFromDocs,
 } from "./utils";
-import { userToChannelUser } from "./userConverter";
+import { getChannelUserFromUser } from "./userConverter";
 
 const firebaseConfig = {
   appId: import.meta.env.VITE_APP_ID,
@@ -82,18 +83,36 @@ export function addUserToGlobalChannel({
   onSuccess,
   onFailure,
 }: { user: User } & BoolBacks<any>) {
-  const globalChannel = doc(db, "channels", "global");
+  const globalChannelDoc = doc(db, "channels", "global");
 
-  const key = `users.${user.uid}`;
+  // Get the global channel.
+  getDoc(globalChannelDoc).then((docSnapshot) => {
+    const globalChannel: unknown = docSnapshot.data();
 
-  updateDoc(globalChannel, {
-    [key]: userToChannelUser(user),
-  })
-    .then(onSuccess)
-    .catch((error) => {
-      console.error(error);
-      onFailure(strings.DEFAULT_ERROR);
-    });
+    // Type guard.
+    if (isChannel(globalChannel)) {
+      // If the user already exists.
+      if (globalChannel.users[user.uid]) {
+        onSuccess(true);
+        return;
+      }
+
+      // Otherwise, add the user.
+      updateDoc(globalChannelDoc, {
+        [`users.${user.uid}`]: getChannelUserFromUser(user),
+      })
+        .then(onSuccess)
+        .catch((error) => {
+          console.error(error);
+          onFailure(strings.DEFAULT_ERROR);
+        });
+
+      return;
+    }
+
+    console.error("TypeScriptError: doc isn't of type Channel");
+    onFailure(strings.DEFAULT_ERROR);
+  });
 }
 
 /**
@@ -178,16 +197,22 @@ export function sendMessageToChannel({
 /**
  * Subscribes to a channel for real-time updates.
  */
-export function subscribeToChannel({
+export function subscribeUserToChannel({
+  user,
   channel,
   onSuccess,
   onFailure,
 }: {
+  user: User;
   channel: Channel;
 } & BoolBacks<Message[]>) {
   const messagesCollection = collection(db, "channels", channel.id, "messages");
 
-  const messagesQuery = query(messagesCollection, orderBy("createdAt"));
+  const messagesQuery = query(
+    messagesCollection,
+    orderBy("createdAt"),
+    where("createdAt", ">=", channel.users[user.uid].addedAt)
+  );
 
   // Instantiate the listener on the messages collection.
   unsubscribe = onSnapshot(messagesQuery, (docs) => {

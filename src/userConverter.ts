@@ -1,9 +1,20 @@
 import { User } from "firebase/auth";
-import { ChannelUser } from "./types";
+import { Timestamp } from "firebase/firestore";
+import { ChannelUser, MessageUser } from "./types";
 
-// Convert User to ChannelUser
-export function userToChannelUser(user: User): ChannelUser {
+// Converts a User to ChannelUser
+export function getChannelUserFromUser(user: User): ChannelUser {
   return {
+    addedAt: Timestamp.now(),
+  };
+}
+
+/**
+ * Converts User to MessageUser
+ */
+export function getMessageUserFromUser(user: User): MessageUser {
+  return {
+    uid: user.uid,
     photoURL: user.photoURL,
     displayName: user.displayName,
   };

@@ -23,7 +23,7 @@ export default function ChatBoxHeader() {
 
   return (
     <CardHeader
-      avatar={<img src={logoImage} width="75" />}
+      avatar={<img alt="" src={logoImage} width="75" />}
       action={
         <>
           <IconButton onClick={handleClick} aria-label="Options">

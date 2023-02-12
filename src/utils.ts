@@ -1,14 +1,16 @@
-import { DocumentData, QuerySnapshot } from "firebase/firestore";
 import strings from "./strings";
 import { BoolBacks, Channel, Message } from "./types";
+import { DocumentData, QuerySnapshot } from "firebase/firestore";
 
 /// Type Guards.
 export function isChannel(object: any): object is Channel {
-  return object && object.label && object.type && object.users;
+  return object && object.label && object.variant && object.users;
 }
 
 export function isMessage(object: any): object is Message {
-  return object && object.text && object.from && object.createdAt;
+  return (
+    object && object.text && object.variant && object.from && object.createdAt
+  );
 }
 
 /// Parsers.
@@ -22,6 +24,12 @@ export function parseDocsInto<T>(
 
   // Extract the documents' data
   docs.forEach((doc) => parsedDocs.push({ ...doc.data(), id: doc.id }));
+
+  // No results found
+  if (parsedDocs.length === 0) {
+    onSuccess(parsedDocs as T);
+    return;
+  }
 
   // Type guard
   if (typeGuard(parsedDocs[0])) {

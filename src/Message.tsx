@@ -7,15 +7,14 @@ import {
 } from "@mui/material";
 
 // Types.
+import type { Message } from "./types";
 import { useState } from "preact/hooks";
-import type { Channel, Message } from "./types";
 import { AccessTimeFilled } from "@mui/icons-material";
 
 export type MessageProps = {
-  displayName?: string;
+  from: string;
   isSentByUser?: boolean;
-  channelUsers: Channel["users"];
-} & Message;
+} & Omit<Message, "from">;
 
 /**
  * Global date variable. Instantiated globally since the component gets called
@@ -25,8 +24,8 @@ let date = new Date();
 
 export default function Message({
   text,
+  from,
   createdAt,
-  displayName,
   isSentByUser,
 }: MessageProps) {
   // Set the time for each message.
@@ -50,7 +49,7 @@ export default function Message({
         onClick={() => setAreDetailsShown(!areDetailsShown)}
       >
         <ListItemText
-          primary={displayName}
+          primary={from}
           primaryTypographyProps={{
             color: "secondary",
             fontSize: ".75rem",

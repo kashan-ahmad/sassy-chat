@@ -6,25 +6,12 @@ import { useContext, useEffect, useState } from "preact/hooks";
 import Message from "./Message";
 import List from "@mui/material/List";
 import ChatBoxForm from "./ChatBoxForm";
-import ChatBoxEmpty from "./ChatBoxEmpty";
-import { CardActions } from "@mui/material";
-import ChannelHeader from "./ChannelHeader";
-import { subscribeToChannel, unsubscribeFromChannel } from "./server";
 import ErrorInline from "./ErrorInline";
 import LoaderInline from "./LoaderInline";
-
-/**
- * The currently active user/sender. This is used to make the first message of a
- * user has their name on the message and stop the consequent ones from showing
- * a name, simulating a chat-like behavior.
- */
-let currentUserID = "";
-
-/**
- * Variable to check if a message is the first message of a user from a
- * sequence of messages from the same user.
- */
-let isFirstMessageOfUser = false;
+import { CardActions } from "@mui/material";
+import ChannelHeader from "./ChannelHeader";
+import TimestampInjector from "./Message/Injectors/TimestampInjector";
+import { subscribeUserToChannel, unsubscribeFromChannel } from "./server";
 
 export default function ChatBoxChannel({
   selectedChannel,
@@ -39,15 +26,34 @@ export default function ChatBoxChannel({
     status: "loading",
   });
 
+  /**
+   * The currently active user/sender. This is used to make the first message
+   * of a user has their name on the message and stop the consequent ones from
+   * showing a name, simulating a chat-like behavior.
+   */
+  let currentUserID = "";
+
+  /**
+   * Variable to check if a message is the first message of a user from a
+   * sequence of messages from the same user.
+   */
+  let isFirstMessageOfUser = false;
+
   // Effect: Subscribe to the selected channel to listen for updates.
   useEffect(() => {
+    const timestampInjector = new TimestampInjector();
+
     // Subscribe for real-time updates.
-    subscribeToChannel({
+    subscribeUserToChannel({
+      user: user.data!,
       channel: selectedChannel,
       onSuccess: (messages) => {
         // Replace the current channel with it's updated state.
         setMessages({
-          data: messages,
+          data: timestampInjector.inject(
+            selectedChannel.users[user.data!.uid].addedAt,
+            messages
+          ),
           status: "loaded",
         });
       },
@@ -108,46 +114,38 @@ export default function ChatBoxChannel({
             overflow: "auto",
           }}
         >
-          {messages.data.length === 0 ? (
-            <ChatBoxEmpty />
-          ) : (
-            messages.data.map((message, i) => {
-              // It's not the first message by default.
-              isFirstMessageOfUser = false;
+          {messages.data.map((message, i) => {
+            // It's not the first message by default.
+            isFirstMessageOfUser = false;
 
-              // First-case scenario, when the first message gets rendered,
-              // currentUserID is empty.
-              if (!currentUserID) {
-                // In this case, we set the message sender's ID as the
-                // currently active user ID.
-                currentUserID = message.from;
+            // First-case scenario, when the first message gets rendered,
+            // currentUserID is empty.
+            if (!currentUserID) {
+              // In this case, we set the message sender's ID as the
+              // currently active user ID.
+              currentUserID = message.from.uid;
 
-                // And since it's the first message of this user;
-                isFirstMessageOfUser = true;
-              }
+              // And since it's the first message of this user;
+              isFirstMessageOfUser = true;
+            }
 
-              // The currently active user ID doesn't match the sender's ID.
-              // Which means this sender is different than the previous one.
-              if (currentUserID != message.from) {
-                // Let's set this sender as the currently active sender.
-                currentUserID = message.from;
-                isFirstMessageOfUser = true;
-              }
+            // The currently active user ID doesn't match the sender's ID.
+            // Which means this sender is different than the previous one.
+            if (currentUserID != message.from.uid) {
+              // Let's set this sender as the currently active sender.
+              currentUserID = message.from.uid;
+              isFirstMessageOfUser = true;
+            }
 
-              return (
-                <Message
-                  key={i}
-                  {...message}
-                  isSentByUser={user.data!.uid === message.from}
-                  displayName={
-                    isFirstMessageOfUser
-                      ? selectedChannel.users[currentUserID].displayName
-                      : ""
-                  }
-                />
-              );
-            })
-          )}
+            return (
+              <Message
+                key={i}
+                {...message}
+                isSentByUser={user.data!.uid === message.from.uid}
+                from={isFirstMessageOfUser ? message.from.displayName : ""}
+              />
+            );
+          })}
         </List>
       )}
       <CardActions>
